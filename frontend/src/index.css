@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-industrial-900 text-industrial-100 font-sans antialiased; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { @apply bg-industrial-900; }
+  ::-webkit-scrollbar-thumb { @apply bg-industrial-600 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ai-core; }
+}
+
+@layer components {
+  .btn-primary { @apply px-4 py-2 bg-ai-core text-white font-medium rounded-lg shadow-md hover:bg-ai-glow hover:shadow-glow-blue transition-all duration-300; }
+  .btn-secondary { @apply px-4 py-2 bg-industrial-700 text-industrial-100 font-medium rounded-lg shadow-md hover:bg-industrial-600 border border-industrial-600 transition-all duration-300; }
+  .panel { @apply bg-industrial-800 border border-industrial-700 rounded-xl shadow-panel p-6; }
+  .glass-panel { @apply bg-industrial-800/60 backdrop-blur-md border border-industrial-700/50 rounded-xl shadow-panel p-6; }
+  .input-field { @apply w-full bg-industrial-900 border border-industrial-600 rounded-lg px-4 py-2 text-industrial-100 focus:outline-none focus:ring-2 focus:ring-ai-core focus:border-transparent transition-all; }
+  .heading-1 { @apply text-4xl md:text-5xl font-bold tracking-tight text-white; }
+  .heading-2 { @apply text-2xl md:text-3xl font-semibold text-industrial-50; }
+}
+
+@layer utilities {
+  .text-glow { text-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+}
