@@ -7,7 +7,10 @@ __pycache__/
 
 # Virtual Environment
 venv/
+.venv/
 .env
+backend/venv/
+backend/.env
 
 # IDE
 .vscode/
@@ -17,8 +20,17 @@ venv/
 .DS_Store
 Thumbs.db
 
-# ChromaDB
-backend/storage/chroma/
+# Storage / Uploaded files
+backend/storage/
+*.pdf
+
+# RAG/Data directories (ignore contents but keep structure placeholders)
+data/raw/*
+!data/raw/raw.md
+data/processed/*
+!data/processed/processed.md
+data/vectordb/*
+!data/vectordb/vectordb.md
 
 # Logs
 *.log
