@@ -11,6 +11,9 @@ import Search from './pages/Search';
 import Chat from './pages/Chat';
 import Knowledge from './pages/Knowledge';
 import Profile from './pages/Profile';
+import Graph from './pages/Graph';
+import RCA from './pages/RCA';
+import Compliance from './pages/Compliance';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -28,6 +31,9 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/graph" element={<Graph />} />
+            <Route path="/rca" element={<RCA />} />
+            <Route path="/compliance" element={<Compliance />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
           <Route path="*" element={<NotFound />} />

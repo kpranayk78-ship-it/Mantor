@@ -4,8 +4,10 @@ export default function Breadcrumbs() {
   const pathnames = location.pathname.split('/').filter(x => x);
   return (
     <nav className="flex text-sm text-industrial-400" aria-label="Breadcrumb">
-      <ol className="inline-flex items-center space-x-1 md:space-x-3">
-        <li className="inline-flex items-center"><Link to="/dashboard" className="hover:text-ai-core">Home</Link></li>
+      <ol className="inline-flex items-center space-x-2">
+        <li className="inline-flex items-center">
+          <Link to="/dashboard" className="hover:text-industrial-100 transition-colors">Home</Link>
+        </li>
         {pathnames.map((name, index) => {
           const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
           const isLast = index === pathnames.length - 1;
@@ -13,8 +15,12 @@ export default function Breadcrumbs() {
           return (
             <li key={name}>
               <div className="flex items-center">
-                <span className="mx-2">/</span>
-                {isLast ? <span className="text-industrial-100">{formattedName}</span> : <Link to={routeTo} className="hover:text-ai-core">{formattedName}</Link>}
+                <span className="mx-2 text-industrial-500 font-light">/</span>
+                {isLast ? (
+                  <span className="text-industrial-100 font-medium">{formattedName}</span>
+                ) : (
+                  <Link to={routeTo} className="hover:text-industrial-100 transition-colors">{formattedName}</Link>
+                )}
               </div>
             </li>
           );
