@@ -10,4 +10,4 @@ api.interceptors.response.use((response) => response, (error) => {
   return Promise.reject(error);
 });
 export const delay = (ms = 800) => new Promise((resolve) => setTimeout(resolve, ms));
-export default api;
+export default api; 

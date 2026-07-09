@@ -1,61 +1,128 @@
-import React from 'react';
-import { Tabs, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Button, Dropdown, Badge } from '../components/common';
-import { FaFilePdf, FaFileWord, FaFileExcel, FaDownload, FaShareAlt, FaPlus, FaEllipsisV } from 'react-icons/fa';
-
-const mockDocs = [
-  { id: 1, title: 'Safety Protocols 2026', type: 'PDF', category: 'Manuals', date: '2 days ago', size: '2.4 MB', icon: FaFilePdf },
-  { id: 2, title: 'Turbine X9 Maintenance', type: 'DOCX', category: 'Manuals', date: '1 week ago', size: '1.1 MB', icon: FaFileWord },
-  { id: 3, title: 'Q1 Incident Reports', type: 'XLSX', category: 'Logs', date: '1 month ago', size: '4.8 MB', icon: FaFileExcel },
-  { id: 4, title: 'Sector 4 Network Schema', type: 'PDF', category: 'Schematics', date: '3 months ago', size: '12.5 MB', icon: FaFilePdf },
-];
+import React, { useEffect, useState } from 'react';
+import apiClient from '../services/apiClient';
+import { useNavigate } from 'react-router-dom';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Button, Dropdown, StatusBadge, ProcessingTimeline, Modal, SearchBar, Spinner, Alert } from '../components/common';
+import { FaFilePdf, FaDownload, FaShareAlt, FaPlus, FaEllipsisV, FaFileAlt, FaInbox } from 'react-icons/fa';
 
 const DocumentTable = ({ documents }) => {
-  const dropdownItems = [{ label: 'Download', icon: <FaDownload /> }, { label: 'Share', icon: <FaShareAlt /> }];
+  const [selectedDoc, setSelectedDoc] = useState(null);
+
+  if (documents.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-industrial-700 rounded-lg">
+        <FaInbox className="text-industrial-600 mb-4" size={48} />
+        <h3 className="text-lg font-medium text-industrial-100">No documents found</h3>
+        <p className="text-industrial-400 mt-1 max-w-sm">There are no documents matching your search criteria, or your knowledge base is currently empty.</p>
+      </div>
+    );
+  }
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[300px]">Document Name</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Category</TableHead>
-          <TableHead>Modified</TableHead>
-          <TableHead>Size</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {documents.map((doc) => {
-          const Icon = doc.icon;
-          return (
-            <TableRow key={doc.id} className="group">
-              <TableCell className="font-medium">
-                <div className="flex items-center gap-3">
-                  <Icon className="text-industrial-400 group-hover:text-industrial-100 transition-colors" size={16} />
-                  <span>{doc.title}</span>
-                </div>
-              </TableCell>
-              <TableCell><Badge variant="neutral">{doc.type}</Badge></TableCell>
-              <TableCell><Badge variant="info">{doc.category}</Badge></TableCell>
-              <TableCell className="text-industrial-400">{doc.date}</TableCell>
-              <TableCell className="text-industrial-400">{doc.size}</TableCell>
-              <TableCell className="text-right">
-                <Dropdown items={dropdownItems} trigger={<Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-md text-industrial-400 opacity-0 group-hover:opacity-100 transition-opacity"><FaEllipsisV /></Button>} />
-              </TableCell>
+    <>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[40%]">Filename</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Upload Time</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+          </TableHeader>
+          <TableBody>
+            {documents.map((doc) => {
+              const dropdownItems = [
+                { label: 'View Status', icon: <FaFileAlt />, onClick: () => setSelectedDoc(doc) },
+                { label: 'Download', icon: <FaDownload /> }, 
+                { label: 'Share', icon: <FaShareAlt /> }
+              ];
+              // Temporary mock values
+              const mockStatus = ['Uploaded', 'Parsing', 'Parsed', 'Chunked', 'Embedded', 'Indexed', 'Failed'][doc.document_id % 7] || 'Uploaded';
+              const mockTime = 'Just now';
+
+              return (
+                <TableRow key={doc.document_id} className="group hover:bg-industrial-800/50 transition-colors">
+                  <TableCell className="font-medium cursor-pointer" onClick={() => setSelectedDoc(doc)}>
+                    <div className="flex items-center gap-3">
+                      <FaFilePdf className="text-industrial-400 group-hover:text-industrial-100 transition-colors" size={16} />
+                      <span className="truncate">{doc.original_filename}</span>
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <StatusBadge status={mockStatus} />
+                  </TableCell>
+
+                  <TableCell className="text-industrial-400 whitespace-nowrap">
+                    {mockTime}
+                  </TableCell>
+
+                  <TableCell className="text-right">
+                    <Dropdown
+                      items={dropdownItems}
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-md text-industrial-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FaEllipsisV />
+                        </Button>
+                      }
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+      
+      {selectedDoc && (
+        <Modal 
+          isOpen={!!selectedDoc} 
+          onClose={() => setSelectedDoc(null)} 
+          title="Document Processing Status"
+          description={`Pipeline progress for ${selectedDoc.original_filename}`}
+        >
+          <ProcessingTimeline 
+            currentStatus={['Uploaded', 'Parsing', 'Parsed', 'Chunked', 'Embedded', 'Indexed', 'Failed'][selectedDoc.document_id % 7] || 'Uploaded'} 
+            isFailed={(['Uploaded', 'Parsing', 'Parsed', 'Chunked', 'Embedded', 'Indexed', 'Failed'][selectedDoc.document_id % 7] || 'Uploaded') === 'Failed'}
+          />
+        </Modal>
+      )}
+    </>
   );
 };
 
 export default function Knowledge() {
-  const tabsData = [
-    { id: 'all', label: 'All Documents', content: <DocumentTable documents={mockDocs} /> },
-    { id: 'manuals', label: 'Manuals', content: <DocumentTable documents={mockDocs.filter(d => d.category === 'Manuals')} /> },
-    { id: 'schematics', label: 'Schematics', content: <DocumentTable documents={mockDocs.filter(d => d.category === 'Schematics')} /> },
-    { id: 'logs', label: 'Incident Logs', content: <DocumentTable documents={mockDocs.filter(d => d.category === 'Logs')} /> },
-  ];
+  const navigate = useNavigate();
+  const [documents, setDocuments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    apiClient
+      .get('/documents/')
+      .then((res) => {
+        setDocuments(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError('Failed to load documents. Please try again later.');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  const filteredDocuments = documents.filter(doc => 
+    doc.original_filename.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -63,9 +130,35 @@ export default function Knowledge() {
           <h2 className="text-xl font-medium text-industrial-100 tracking-tight">Knowledge Base</h2>
           <p className="text-industrial-400 mt-1 text-sm">Access and manage all industrial documentation.</p>
         </div>
-        <Button variant="primary" icon={<FaPlus />}>Upload Document</Button>
+        <Button variant="primary" icon={<FaPlus />} onClick={() => navigate('/upload')}>
+          Upload Document
+        </Button>
       </div>
-      <Tabs items={tabsData} />
+
+      <div className="flex items-center gap-4">
+        <div className="w-full sm:w-96">
+          <SearchBar 
+            placeholder="Search by filename..." 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+          />
+        </div>
+      </div>
+
+      <div className="mt-6">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center p-12">
+            <Spinner size="lg" className="mb-4" />
+            <p className="text-industrial-400">Loading documents...</p>
+          </div>
+        ) : error ? (
+          <Alert variant="error" title="Error Loading Documents">
+            {error}
+          </Alert>
+        ) : (
+          <DocumentTable documents={filteredDocuments} />
+        )}
+      </div>
     </div>
   );
 }

@@ -49,10 +49,10 @@ function ToastContainer({ toasts, removeToast }) {
         <Transition key={t.id} show={true} appear={true} as={Fragment}
           enter="transform ease-out duration-300 transition" enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4" enterTo="translate-y-0 opacity-100 sm:translate-x-0"
           leave="transition ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-          <div className="pointer-events-auto w-full bg-industrial-800 border border-industrial-700 rounded-lg shadow-panel p-4 flex items-start gap-3 relative">
+          <div className="pointer-events-auto w-full bg-industrial-800 border border-industrial-700 rounded-lg shadow-sm p-4 flex items-start gap-3 relative">
             <div className="flex-shrink-0 mt-0.5">{icons[t.type]}</div>
-            <div className="flex-1"><p className="text-sm font-medium text-white">{t.message}</p></div>
-            <button onClick={() => removeToast(t.id)} className="flex-shrink-0 ml-4 text-industrial-400 hover:text-white transition-colors"><FaTimes /></button>
+            <div className="flex-1"><p className="text-sm font-medium text-industrial-100">{t.message}</p></div>
+            <button onClick={() => removeToast(t.id)} className="flex-shrink-0 ml-4 text-industrial-400 hover:text-industrial-100 transition-colors"><FaTimes /></button>
           </div>
         </Transition>
       ))}

@@ -3,8 +3,8 @@ export default function PublicLayout() {
   return (
     <div className="min-h-screen bg-industrial-900 flex flex-col">
       <header className="px-6 py-4 border-b border-industrial-800 flex justify-between items-center bg-industrial-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <Link to="/" className="text-xl font-bold text-white flex items-center gap-2">
-          <span className="w-8 h-8 rounded bg-ai-core flex items-center justify-center shadow-glow-blue">AI</span>
+        <Link to="/" className="text-xl font-bold text-industrial-50 flex items-center gap-2">
+          <span className="w-8 h-8 rounded bg-ai-core flex items-center justify-center text-white">AI</span>
           <span className="hidden sm:inline">Platform</span>
         </Link>
         <nav className="flex items-center gap-4">

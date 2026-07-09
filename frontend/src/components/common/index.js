@@ -12,3 +12,5 @@ export { default as Spinner } from './Spinner';
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
 export { default as Tabs } from './Tabs';
 export { default as Breadcrumbs } from './Breadcrumbs';
+export { default as StatusBadge } from './StatusBadge';
+export { default as ProcessingTimeline } from './ProcessingTimeline';
